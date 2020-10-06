@@ -1,2 +1,33 @@
 #!/bin/bash
+trap handle_term TERM INT
+function handle_term {
+    echo "$0" received termination signal
+    local cnt
+    local killed=1
+    if [ -n "$PID" ]; then
+        kill -TERM $PID
+        for cnt in {1..10}
+        do
+            kill -0 $PID >/dev/null 2>&1
+            if [ "$?" -ne 0 ]; then
+                killed=0
+                break
+            else
+                sleep 1
+            fi
+        done
+        if [ "$killed" -ne 0 ]; then
+            kill -9 $PID
+        fi
+        wait $PID
+        exit $?
+    fi
+    exit 1
+}
+PID=
+if [ -L "/opt/peak/pre-run-init" ]; then
+    ./opt/peak/pre-run-init &
+    PID=$!
+    wait $PID
+fi
 exec /opt/peak/run.sh -p $@

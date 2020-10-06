@@ -11,8 +11,12 @@ function output {
             TESTNAME=$(basename "$OPENSHIFT_BUILD_SOURCE")
         fi
     fi
-    log=$(cat /opt/peak/log.txt | base64 -w 0)
-    errors=$(cat /opt/peak/errors.txt | base64 -w 0)
+    if [ -f "/opt/peak/log.txt" ]; then
+        log=$(cat /opt/peak/log.txt | base64 -w 0)
+    fi
+    if [ -f "/opt/peak/errors.txt" ]; then
+        errors=$(cat /opt/peak/errors.txt | base64 -w 0)
+    fi
     cat <<- EOF
 	{
 	        "results": [
@@ -89,6 +93,13 @@ while getopts :hp option; do
     esac
 done
 shift $((OPTIND-1))
+
+PID=
+if [ -L "/opt/peak/pre-run-init" ]; then
+    ./opt/peak/pre-run-init &
+    PID=$!
+    wait $PID
+fi
 
 # Run tests in the background so that we can still get a term signal
 projopt=""

@@ -88,8 +88,8 @@ check_ocp
 
 os::util::environment::setup_time_vars
 
-trap handle_term TERM INT
 function handle_term {
+    echo "$0" received termination signal
     local cnt
     local killed=1
     if [ -n "$PID" ]; then
@@ -108,6 +108,7 @@ function handle_term {
             kill -9 $PID
         fi
         wait $PID
+        exit $?
     fi
     exit 1
 }

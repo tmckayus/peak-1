@@ -17,3 +17,11 @@ else
 fi
 mkdir /opt/peak/operator-tests/$dirname
 cp -r $from /opt/peak/operator-tests/$dirname
+if [ -n "$INIT_SCRIPT" ]; then
+    if [ -f "/opt/peak/operator-tests/$dirname/$INIT_SCRIPT" ]; then
+        ln -s /opt/peak/operator-tests/$dirname/$INIT_SCRIPT /opt/peak/pre-run-init
+    else
+        echo "Error: specified init script $INIT_SCRIPT does not exist, exiting s2i assemble"
+        exit 1
+    fi
+fi

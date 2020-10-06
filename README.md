@@ -57,10 +57,18 @@ oc secret link builder secret-push
 oc new-build quay.io/tmckayus/peaks2i~https://github.com/tmckayus/rad-spark-sample-tests --strategy=source --to-docker=true --to=quay.io/tmckayus/testimage
 ```
 
-A subdirectory in the test repository can be specified as a relative path with the SOURCE_PATH environment variable, for example
+A subdirectory in the test repository can be specified as a relative path with the SOURCE_DIR environment variable, for example
 
 ```
 oc new-build quay.io/tmckayus/peak~https://github.com/tmckayus/my-repo -e SOURCE_DIR=path/to/tests --strategy=source --to-docker=true --to=quay.io/tmckayus/mytest:latest"
+```
+
+A script can be specified which will be executed before the tests are run.
+This script should be in the test repository and *not* end in .sh if it's in the path with normal tests.
+Specify the relative path to the script with the INIT_SCRIPT environment variable, for example
+
+```
+oc new-build quay.io/tmckayus/peak~https://github.com/tmckayus/my-repo -e INIT_SCRIPT=myinitscript --strategy=source --to-docker=true --to=quay.io/tmckayus/mytest:latest"
 ```
 
 Once built you can display help for the image with podman
@@ -206,7 +214,7 @@ The "-pto" options optionally let you control what setup.sh will manage
 The operator file contains space-separated tuples, one per line:
 
 ```bash
-OPERATOR_NAME DISTRIBUTION_CHANNEL [GIT_TEST_REPOSITORY] [GIT_BRANCH]
+PACKAGE_MANIFEST_NAME DISTRIBUTION_CHANNEL [GIT_TEST_REPOSITORY] [GIT_BRANCH]
 ```
 
 for example
@@ -219,7 +227,7 @@ This tuple would cause setup.sh to do the following:
 
 * Create a *radanalytics-spark-xxxx* namespace. Delete it first if *-d* is set.
 
-* Install the *radanalytics-spark* operator from the *alpha* channel using the OLM
+* Install the *radanalytics-spark* package from the *alpha* channel using the OLM
   Since radanalytics-spark can be installed globally, it will be installed in the
   *openshift-operators* namespace instead of *radanalytics-spark-xxx*. Uninstall the
   operator first if *-d* is set.
