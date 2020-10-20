@@ -1,11 +1,24 @@
 #!/bin/bash
 
+# This tells you whether or not you have an oc login
+# and can therefore do everything including switching projects
 function check_ocp() {
     set +e
     oc status &> /dev/null
     res="$?"
     set -e
     OCP="$res"
+}
+
+# This tells you that you have at least an in-cluster config,
+# that is KUBECONFIG has been set to point to a valid kube-config
+# file (but you may not have a login which limits commands for projects)
+function check_whoami() {
+    set +e
+    oc whoami &> /dev/null
+    res="$?"
+    set -e
+    WHOAMI="$res"
 }
 
 function set_curr_project() {

@@ -238,12 +238,20 @@ fi
 # Track whether we have a valid oc login
 source $SCRIPT_DIR/util
 check_ocp
+check_whoami
 
-# We have to have a login for operators and projects
-if [ "$operators" == "true" -o "$projects" == "true" ]; then
+# We have to have a login for projects
+if [ "$projects" == "true" ]; then
     if [ "$OCP" -ne 0 ]; then
-        echo "No active openshift login, can't set up projects or operators, exiting."
-        echo "To clone test subdirectories without an openshift login, run with the just '-t' option."
+        echo "No active openshift login, can't set up projects, exiting."
+        exit 0
+    fi
+fi
+
+# We have to have at least a basic config to install operators
+if [ "$operators" == "true" ]; then
+    if [ "$WHOAMI" -ne 0 ] && [ "$OCP" -ne 0 ]; then
+        echo "No valid kubeconfig or login, can't set up operators, exiting."
         exit 0
     fi
 fi
