@@ -50,7 +50,8 @@ while getopts ivdphf:e: option; do
             debug=true
             ;;
         p)
-            makeproj=false
+            # debug, makeproj always true
+            makeproj=true
             ;;
 	v)
 	    verbose=true
