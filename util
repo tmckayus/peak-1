@@ -19,6 +19,7 @@ function check_whoami() {
     res="$?"
     set -e
     WHOAMI="$res"
+    OCP="$res"
 }
 
 function set_curr_project() {
