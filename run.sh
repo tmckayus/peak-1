@@ -10,6 +10,9 @@ interactive=false
 set +e
 echo "beginning of run.sh, calling oc status"
 oc status
+env
+echo $KUBECONFIG
+more $KUBECONFIG
 set -e
 
 SCRIPT_DIR=$(readlink -f `dirname "${BASH_SOURCE[0]}"`)

@@ -3,6 +3,7 @@
 echo "beginning of setup.sh, calling oc status"
 set +e
 oc status
+env
 echo $KUBECONFIG
 more $KUBECONFIG
 set -e 
