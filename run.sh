@@ -7,6 +7,9 @@ errfile=
 verbose=false
 interactive=false
 
+echo "beginning of run.sh, calling oc status"
+oc status
+
 SCRIPT_DIR=$(readlink -f `dirname "${BASH_SOURCE[0]}"`)
 TEST_DIR=$SCRIPT_DIR/operator-tests
 export TEST_DIR

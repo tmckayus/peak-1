@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "beginning of setup.sh, calling oc status"
+oc status
+
 SCRIPT_DIR=$(readlink -f `dirname "${BASH_SOURCE[0]}"`)
 
 function help() {
@@ -297,3 +300,7 @@ do
         fi
     fi
 done < "$1"
+
+echo "end of setup.sh, calling oc status"
+oc status
+
