@@ -9,6 +9,7 @@ f [ -n "${KUBECONFIG:-}" ]; then
     more $KUBECONFIG
 fi
 more ~/.kube/config
+oc config get-contexts
 set -e 
 
 SCRIPT_DIR=$(readlink -f `dirname "${BASH_SOURCE[0]}"`)
@@ -318,4 +319,5 @@ f [ -n "${KUBECONFIG:-}" ]; then
     more $KUBECONFIG
 fi
 more ~/.kube/config
+oc config get-contexts
 set -e

@@ -16,6 +16,7 @@ if [ -n "${KUBECONFIG:-}" ]; then
     more $KUBECONFIG
 fi
 more ~/.kube/config
+oc config get-contexts
 set -e
 
 SCRIPT_DIR=$(readlink -f `dirname "${BASH_SOURCE[0]}"`)
@@ -209,6 +210,7 @@ if [ -n "${KUBECONFIG:-}" ]; then
     more $KUBECONFIG
 fi
 more ~/.kube/config
+oc config get-contexts
 set -e
 
     for test in "${tests[@]}"; do
