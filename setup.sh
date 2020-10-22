@@ -1,7 +1,11 @@
-#!/bin/bash
+!/bin/bash
 
 echo "beginning of setup.sh, calling oc status"
+set +e
 oc status
+echo $KUBECONFIG
+more $KUBECONFIG
+set -e 
 
 SCRIPT_DIR=$(readlink -f `dirname "${BASH_SOURCE[0]}"`)
 
@@ -302,5 +306,6 @@ do
 done < "$1"
 
 echo "end of setup.sh, calling oc status"
+set +e
 oc status
-
+set -e
