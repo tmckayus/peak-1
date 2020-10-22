@@ -86,6 +86,7 @@ source $SCRIPT_DIR/util
 
 # Track whether we have a valid oc login
 check_ocp
+check_whoami
 
 os::util::environment::setup_time_vars
 
