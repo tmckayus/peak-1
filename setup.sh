@@ -1,10 +1,10 @@
-!/bin/bash
+#!/bin/bash
 
 echo "beginning of setup.sh, calling oc status"
 set +e
 oc status
 env
-f [ -n "${KUBECONFIG:-}" ]; then
+if [ -n "${KUBECONFIG:-}" ]; then
     echo $KUBECONFIG
     more $KUBECONFIG
 fi
@@ -314,7 +314,7 @@ echo "end of setup.sh, calling oc status"
 set +e
 oc status
 env
-f [ -n "${KUBECONFIG:-}" ]; then
+if [ -n "${KUBECONFIG:-}" ]; then
     echo $KUBECONFIG
     more $KUBECONFIG
 fi
