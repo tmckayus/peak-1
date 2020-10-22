@@ -11,8 +11,11 @@ set +e
 echo "beginning of run.sh, calling oc status"
 oc status
 env
-echo $KUBECONFIG
-more $KUBECONFIG
+if [ -n "${KUBECONFIG:-}" ]; then
+    echo $KUBECONFIG
+    more $KUBECONFIG
+fi
+more ~/.kube/config
 set -e
 
 SCRIPT_DIR=$(readlink -f `dirname "${BASH_SOURCE[0]}"`)
@@ -196,6 +199,17 @@ for dir in "${dirs[@]}"; do
         currproj=" ($currproj)"
     fi
     set +x
+
+set +e
+echo "run.sh after go_to_project, calling oc status"
+oc status
+env
+if [ -n "${KUBECONFIG:-}" ]; then
+    echo $KUBECONFIG
+    more $KUBECONFIG
+fi
+more ~/.kube/config
+set -e
 
     for test in "${tests[@]}"; do
         shortname=${test#${TEST_DIR}/}

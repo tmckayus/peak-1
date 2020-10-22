@@ -4,8 +4,11 @@ echo "beginning of setup.sh, calling oc status"
 set +e
 oc status
 env
-echo $KUBECONFIG
-more $KUBECONFIG
+f [ -n "${KUBECONFIG:-}" ]; then
+    echo $KUBECONFIG
+    more $KUBECONFIG
+fi
+more ~/.kube/config
 set -e 
 
 SCRIPT_DIR=$(readlink -f `dirname "${BASH_SOURCE[0]}"`)
@@ -309,4 +312,10 @@ done < "$1"
 echo "end of setup.sh, calling oc status"
 set +e
 oc status
+env
+f [ -n "${KUBECONFIG:-}" ]; then
+    echo $KUBECONFIG
+    more $KUBECONFIG
+fi
+more ~/.kube/config
 set -e
