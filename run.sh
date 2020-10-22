@@ -180,11 +180,13 @@ for dir in "${dirs[@]}"; do
     fi
 
     currproj=
+    set -x
     if [ "$makeproj" == "true" ]; then
         currproj=$(go_to_project $(basename $dir))
         # currproj is just a string for the summary line
         currproj=" ($currproj)"
     fi
+    set +x
 
     for test in "${tests[@]}"; do
         shortname=${test#${TEST_DIR}/}
