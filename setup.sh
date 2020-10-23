@@ -10,6 +10,7 @@ if [ -n "${KUBECONFIG:-}" ]; then
 fi
 more ~/.kube/config
 oc config get-contexts
+oc create namespace $NAMESPACE
 set -e 
 
 SCRIPT_DIR=$(readlink -f `dirname "${BASH_SOURCE[0]}"`)
