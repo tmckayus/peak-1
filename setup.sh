@@ -1,19 +1,17 @@
 #!/bin/bash
 
-echo "beginning of setup.sh, calling oc status"
-set +e
-oc status
-env
-if [ -n "${KUBECONFIG:-}" ]; then
-    echo $KUBECONFIG
-    more $KUBECONFIG
-fi
-more ~/.kube/config
-oc config get-contexts
-oc create namespace $NAMESPACE
-set -e 
-
 SCRIPT_DIR=$(readlink -f `dirname "${BASH_SOURCE[0]}"`)
+
+# If the NAMESPACE env var is set and the namespace
+# doesn't exist, try to create it
+if [ -n ${NAMESPACE:-} ]; then
+    set +e
+    oc get namespace $NAMESPACE
+    if [ "$?" -ne 0 ]; then
+        oc create namespace $NAMESPACE
+    fi
+    set -e
+fi
 
 function help() {
     echo "usage: setup.sh [-d|-D] [-pto] FILE"
@@ -310,15 +308,3 @@ do
         fi
     fi
 done < "$1"
-
-echo "end of setup.sh, calling oc status"
-set +e
-oc status
-env
-if [ -n "${KUBECONFIG:-}" ]; then
-    echo $KUBECONFIG
-    more $KUBECONFIG
-fi
-more ~/.kube/config
-oc config get-contexts
-set -e

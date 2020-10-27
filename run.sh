@@ -7,17 +7,16 @@ errfile=
 verbose=false
 interactive=false
 
-set +e
-echo "beginning of run.sh, calling oc status"
-oc status
-env
-if [ -n "${KUBECONFIG:-}" ]; then
-    echo $KUBECONFIG
-    more $KUBECONFIG
+# If the NAMESPACE env var is set and the namespace
+# doesn't exist, try to create it
+if [ -n ${NAMESPACE:-} ]; then
+    set +e
+    oc get namespace $NAMESPACE
+    if [ "$?" -ne 0 ]; then
+        oc create namespace $NAMESPACE
+    fi
+    set -e
 fi
-more ~/.kube/config
-oc config get-contexts
-set -e
 
 SCRIPT_DIR=$(readlink -f `dirname "${BASH_SOURCE[0]}"`)
 TEST_DIR=$SCRIPT_DIR/operator-tests
@@ -62,8 +61,7 @@ while getopts ivdphf:e: option; do
             debug=true
             ;;
         p)
-            # debug, makeproj always true
-            makeproj=true
+            makeproj=false
             ;;
 	v)
 	    verbose=true
@@ -193,25 +191,11 @@ for dir in "${dirs[@]}"; do
     fi
 
     currproj=
-    set -x
     if [ "$makeproj" == "true" ]; then
         currproj=$(go_to_project $(basename $dir))
         # currproj is just a string for the summary line
         currproj=" ($currproj)"
     fi
-    set +x
-
-set +e
-echo "run.sh after go_to_project, calling oc status"
-oc status
-env
-if [ -n "${KUBECONFIG:-}" ]; then
-    echo $KUBECONFIG
-    more $KUBECONFIG
-fi
-more ~/.kube/config
-oc config get-contexts
-set -e
 
     for test in "${tests[@]}"; do
         shortname=${test#${TEST_DIR}/}
