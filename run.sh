@@ -11,6 +11,7 @@ interactive=false
 # doesn't exist, try to create it
 if [ -n ${NAMESPACE:-} ]; then
     set +e
+    echo "namespace is $NAMESPACE"
     oc get namespace $NAMESPACE
     if [ "$?" -ne 0 ]; then
         oc create namespace $NAMESPACE
