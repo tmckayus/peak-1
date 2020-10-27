@@ -79,12 +79,22 @@ if [ "$debug" == "true" ]; then
     set -x
 fi
 
+# Track whether we have a valid oc identity
+source $SCRIPT_DIR/util
+check_ocp
+
+# If the NAMESPACE env var is set and the namespace doesn't exist, try to create it
+if [ ! -z ${NAMESPACE:-} ] && [ "$OCP" -eq 0 ]; then
+    set +e
+    oc get namespace $NAMESPACE
+    if [ "$?" -ne 0 ]; then
+        oc create namespace $NAMESPACE
+    fi
+    set -e
+fi
+
 # Sourcing common will source test/lib/init.sh
 source $TEST_DIR/common
-source $SCRIPT_DIR/util
-
-# Track whether we have a valid oc login
-check_ocp
 
 os::util::environment::setup_time_vars
 

@@ -242,10 +242,20 @@ check_ocp
 # We have to have a login for operators and projects
 if [ "$operators" == "true" -o "$projects" == "true" ]; then
     if [ "$OCP" -ne 0 ]; then
-        echo "No active openshift login, can't set up projects or operators, exiting."
-        echo "To clone test subdirectories without an openshift login, run with the just '-t' option."
+        echo "No active openshift identity, can't set up projects or operators, exiting."
+        echo "To clone test subdirectories, run with the just '-t' option."
         exit 0
     fi
+fi
+
+# If the NAMESPACE env var is set and the namespace doesn't exist, try to create it
+if [ ! -z ${NAMESPACE:-} ] && [ "$OCP" -eq 0 ]; then
+    set +e
+    oc get namespace $NAMESPACE
+    if [ "$?" -ne 0 ]; then
+        oc create namespace $NAMESPACE
+    fi
+    set -e
 fi
 
 while IFS= read -r line

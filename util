@@ -2,7 +2,7 @@
 
 function check_ocp() {
     set +e
-    oc status &> /dev/null
+    oc whoami &> /dev/null
     res="$?"
     set -e
     OCP="$res"
