@@ -9,7 +9,7 @@ interactive=false
 
 # If the NAMESPACE env var is set and the namespace
 # doesn't exist, try to create it
-if [ -n ${NAMESPACE:-} ]; then
+if [ ! -z ${NAMESPACE:-} ]; then
     set +e
     echo "namespace is $NAMESPACE"
     oc get namespace $NAMESPACE

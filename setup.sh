@@ -4,7 +4,7 @@ SCRIPT_DIR=$(readlink -f `dirname "${BASH_SOURCE[0]}"`)
 
 # If the NAMESPACE env var is set and the namespace
 # doesn't exist, try to create it
-if [ -n ${NAMESPACE:-} ]; then
+if [ ! -z ${NAMESPACE:-} ]; then
     set +e
     oc get namespace $NAMESPACE
     if [ "$?" -ne 0 ]; then
