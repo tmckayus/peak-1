@@ -6,13 +6,14 @@ makeproj=true
 errfile=
 verbose=false
 interactive=false
+neg_regexp=
 
 SCRIPT_DIR=$(readlink -f `dirname "${BASH_SOURCE[0]}"`)
 TEST_DIR=$SCRIPT_DIR/operator-tests
 export TEST_DIR
 
 function help() {
-    echo "usage: run.sh [-h] [-f FILE] [regexp]"
+    echo "usage: run.sh [options] [REGEXP]"
     echo
     echo "Run tests in subdirectories under $TEST_DIR."
     echo
@@ -28,13 +29,16 @@ function help() {
     echo "           This is useful for test development since realtime logs are printed instead of summary logs."
     echo "  -d       Debug, set -x (large amount of output)"
     echo "  -p       Do not create a new project per test directory"
+    echo "  -n       Regexp for exclusion. If a test's absolute path matches this regexp, don't run it."
+    echo "           If the optional regexp argument for inclusion is specified, then this exclusion is"
+    echo "           applied after the inclusion is applied."
     echo
     echo "Optional arguments:"
-    echo "  regexp   Only run test files whose absolute path matches regexp"
+    echo "  REGEXP   Only run test files whose absolute path matches regexp"
     echo
 }
 
-while getopts ivdphf:e: option; do
+while getopts ivdphf:e:n: option; do
     case $option in
         h)
             help
@@ -57,6 +61,9 @@ while getopts ivdphf:e: option; do
 	    ;;
 	i)
 	    interactive=true
+	    ;;
+	n)
+	    neg_regexp=$OPTARG
 	    ;;
         *)
             ;;
@@ -140,8 +147,10 @@ trap "cleanup" EXIT
 
 function find_tests() {
     local test_regex="${2}"
+    local neg_regex="${3}"
     local full_test_list=()
     local selected_tests=()
+    local include=false
 
     full_test_list=($(find "${1}" -maxdepth 1 -name '*.sh'))
     if [ "${#full_test_list[@]}" -eq 0 ]; then
@@ -150,7 +159,15 @@ function find_tests() {
     for test in "${full_test_list[@]}"; do
     	test_rel_path=${test#${TEST_DIR}/}
         if grep -q -E "${test_regex}" <<< "${test_rel_path}"; then
-            selected_tests+=( "${test}" )
+            include=true
+            if [ -n "$neg_regex" ]; then
+                if grep -q -E "${neg_regex}" <<< "${test_rel_path}"; then
+                    include=false
+                fi
+            fi
+            if [ "$include" == "true" ]; then
+                selected_tests+=( "${test}" )
+            fi
         fi
     done
 
@@ -172,7 +189,7 @@ for dir in "${dirs[@]}"; do
 
     # Get the list of test files in the current directory
     set +e
-    output=$(find_tests $dir ${1:-.*})
+    output=$(find_tests $dir ${1:-".*"} "$neg_regexp")
     res=$?
     set -e
     if [ "$res" -ne 0 ]; then
